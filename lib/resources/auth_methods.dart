@@ -5,7 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:instagram_flutter/resources/storage_methods.dart';
 
+const String defaultError = 'An error occurred';
+
 class AuthMethods {
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -16,7 +19,7 @@ class AuthMethods {
     required String bio,
     Uint8List? file,
   }) async {
-    String res = 'Some error occurred';
+    String res = defaultError;
     try {
       if (username.isNotEmpty && email.isNotEmpty && password.isNotEmpty) {
         // Register user
@@ -47,10 +50,34 @@ class AuthMethods {
         res = 'Password required';
       }
     } on FirebaseAuthException catch (err) {
-      res = err.message ?? res;
+      res = err.message ?? err.toString();
     } catch (err) {
       res = err.toString();
     }
+    return res;
+  }
+
+  Future<String> loginUser({
+    required String email,
+    required String password,
+  }) async {
+    String res = defaultError;
+
+    try {
+      if (email.isNotEmpty && password.isNotEmpty) {
+        await _auth.signInWithEmailAndPassword(email: email, password: password);
+        res = 'success';
+      } else if (email.isEmpty) {
+        res = 'Email required';
+      } else if (password.isEmpty) {
+        res = 'Password required';
+      }
+    } on FirebaseAuthException catch (err) {
+      res = err.message ?? err.toString();
+    } catch (err) {
+      res = err.toString();
+    }
+
     return res;
   }
 }
