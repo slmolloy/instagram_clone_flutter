@@ -14,17 +14,18 @@ class AuthMethods {
     required String password,
     required String username,
     required String bio,
-    required Uint8List file,
+    Uint8List? file,
   }) async {
     String res = 'Some error occurred';
     try {
-      if (email.isNotEmpty || password.isNotEmpty || username.isNotEmpty || bio.isNotEmpty) {
+      if (username.isNotEmpty && email.isNotEmpty && password.isNotEmpty) {
         // Register user
         UserCredential cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
 
-        print(cred.user!.uid);
-
-        String url = await StorageMethods().uploadImageToStorage('profilePics', file, false);
+        String? url;
+        if (file != null) {
+          url = await StorageMethods().uploadImageToStorage('profilePics', file, false);
+        }
 
         // Add user to database
         await _firestore.collection('users').doc(cred.user!.uid).set({
@@ -38,13 +39,15 @@ class AuthMethods {
         });
 
         res = 'success';
+      } else if (username.isEmpty) {
+        res = 'Username required';
+      } else if (email.isEmpty) {
+        res = 'Email required';
+      } else if (password.isEmpty) {
+        res = 'Password required';
       }
     } on FirebaseAuthException catch (err) {
-      if (err.code == 'invalid-email') {
-        res = 'The email is badly formatted.';
-      } else if (err.code == 'weak-password') {
-        res = 'Password should be at least 6 characters.';
-      }
+      res = err.message ?? res;
     } catch (err) {
       res = err.toString();
     }
