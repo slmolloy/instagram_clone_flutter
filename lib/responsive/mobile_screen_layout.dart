@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:instagram_flutter/providers/user_provider.dart';
 import 'package:instagram_flutter/utils/colors.dart';
-import 'package:provider/provider.dart';
+import 'package:instagram_flutter/utils/tabs.dart';
 import 'package:instagram_flutter/models/user.dart';
 
 class MobileScreenLayout extends StatefulWidget {
@@ -44,34 +43,9 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
-    User user = Provider.of<UserProvider>(context).getUser;
-
     return Scaffold(
       body: PageView(
-        children: [
-          Center(
-            child: Column(
-              children: [
-                Flexible(child: Container(), flex: 2),
-                Text('Username: ${user.username}'),
-                Text('Email: ${user.email}'),
-                Flexible(child: Container(), flex: 2),
-              ],
-            ),
-          ),
-          Center(
-            child: Text('Search'),
-          ),
-          Center(
-            child: Text('Add Post'),
-          ),
-          Center(
-            child: Text('Notifications'),
-          ),
-          Center(
-            child: Text('Profile'),
-          ),
-        ],
+        children: homeScreenItems,
         controller: pageController,
         onPageChanged: onPageChanged,
         physics: const NeverScrollableScrollPhysics(),

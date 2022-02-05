@@ -90,4 +90,19 @@ class AuthMethods {
 
     return res;
   }
+
+  Future<String> logOutUser() async {
+    String res = defaultError;
+
+    try {
+      await _auth.signOut();
+      res = 'success';
+    } on FirebaseAuthException catch (err) {
+      res = err.message ?? err.toString();
+    } catch (err) {
+      res = err.toString();
+    }
+
+    return res;
+  }
 }
