@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:instagram_flutter/utils/colors.dart';
+import 'package:intl/intl.dart';
 
 class PostCard extends StatelessWidget {
-  const PostCard({Key? key}) : super(key: key);
+  final snap;
+
+  const PostCard({
+    Key? key,
+    required this.snap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +24,10 @@ class PostCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 16,
                   backgroundImage: NetworkImage(
-                    'https://images.unsplash.com/photo-1643779374464-d6eb0acfd6af?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80',
+                    snap['profImage'] ?? 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
                   ),
                 ),
                 Expanded(
@@ -30,10 +36,10 @@ class PostCard extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
-                          'username',
-                          style: TextStyle(
+                          snap['username'],
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -77,7 +83,7 @@ class PostCard extends StatelessWidget {
             height: MediaQuery.of(context).size.height * 0.35,
             width: double.infinity,
             child: Image.network(
-              'https://images.unsplash.com/photo-1643892602650-7713b5bf4fb5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80',
+              snap['postUrl'],
               fit: BoxFit.cover,
             ),
           ),
@@ -120,21 +126,21 @@ class PostCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.subtitle2!.copyWith(
                         fontWeight: FontWeight.w800,
                       ),
-                  child: const Text('1,234 likes'),
+                  child: Text('${snap['likes'].length} likes'),
                 ),
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.only(top: 8.0),
                   child: RichText(
-                    text: const TextSpan(
-                      style: TextStyle(color: primaryColor),
+                    text: TextSpan(
+                      style: const TextStyle(color: primaryColor),
                       children: [
                         TextSpan(
-                          text: 'username',
-                          style: TextStyle(fontWeight: FontWeight.w800),
+                          text: snap['username'],
+                          style: const TextStyle(fontWeight: FontWeight.w800),
                         ),
                         TextSpan(
-                          text: 'What did you say again?',
+                          text: ' ${snap['description']}',
                         ),
                       ],
                     ),
@@ -154,9 +160,11 @@ class PostCard extends StatelessWidget {
                   onTap: () {},
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: const Text(
-                      '2/22/2022',
-                      style: TextStyle(fontSize: 16.0, color: secondaryColor),
+                    child: Text(
+                      DateFormat.yMMMd().format(
+                        snap['datePublished'].toDate(),
+                      ),
+                      style: const TextStyle(fontSize: 16.0, color: secondaryColor),
                     ),
                   ),
                 ),
