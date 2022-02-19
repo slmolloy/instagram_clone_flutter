@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:instagram_flutter/utils/colors.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -54,7 +56,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       return ListTile(
                         leading: CircleAvatar(
                           backgroundImage: NetworkImage(
-                            (snapshot.data! as dynamic).docs[index]['photoUrl'] ?? 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+                            (snapshot.data! as dynamic).docs[index]['photoUrl'] ??
+                                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
                           ),
                         ),
                         title: Text(
@@ -64,7 +67,26 @@ class _SearchScreenState extends State<SearchScreen> {
                     });
               },
             )
-          : Text("NONE!!!"),
+          : FutureBuilder(
+              future: FirebaseFirestore.instance.collection('posts').get(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                return StaggeredGridView.countBuilder(
+                  crossAxisCount: 3,
+                  itemCount: (snapshot.data! as dynamic).docs.length,
+                  itemBuilder: (context, index) => Image.network((snapshot.data! as dynamic).docs[index]['postUrl']),
+                  staggeredTileBuilder: (index) =>
+                      StaggeredTile.count((index % 7 == 0) ? 2 : 1, (index % 7 == 0) ? 2 : 1),
+                  mainAxisSpacing: 8.0,
+                  crossAxisSpacing: 8.0,
+                );
+              },
+            ),
     );
   }
 }
