@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_flutter/utils/colors.dart';
 import 'package:instagram_flutter/utils/tabs.dart';
-import 'package:instagram_flutter/models/user.dart';
 
 class MobileScreenLayout extends StatefulWidget {
   const MobileScreenLayout({Key? key}) : super(key: key);
@@ -12,15 +11,15 @@ class MobileScreenLayout extends StatefulWidget {
 }
 
 class _MobileScreenLayoutState extends State<MobileScreenLayout> {
-  int _page = 0;
-  late PageController pageController;
+  late int _page;
+  late PageController _pageController;
 
   Color getIconColor(int tabPosition) {
     return tabPosition == _page ? primaryColor : secondaryColor;
   }
 
   void navigationTapped(int page) {
-    pageController.jumpToPage(page);
+    _pageController.jumpToPage(page);
   }
 
   void onPageChanged(int page) {
@@ -32,13 +31,14 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
   @override
   void initState() {
     super.initState();
-    pageController = PageController();
+    _page = 0;
+    _pageController = PageController();
   }
 
   @override
   void dispose() {
     super.dispose();
-    pageController.dispose();
+    _pageController.dispose();
   }
 
   @override
@@ -46,7 +46,7 @@ class _MobileScreenLayoutState extends State<MobileScreenLayout> {
     return Scaffold(
       body: PageView(
         children: homeScreenItems,
-        controller: pageController,
+        controller: _pageController,
         onPageChanged: onPageChanged,
         physics: const NeverScrollableScrollPhysics(),
       ),
